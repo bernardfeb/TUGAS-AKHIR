@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <div class="quiz-header">
+    <h2>Quiz {{ subject }}</h2>
+    <div class="timer-container">
+      <div class="timer">
+        <i class="fas fa-clock"></i>
+        <span id="minutes">00</span>:<span id="seconds">00</span>
+      </div>
+    </div>
+  </div>
+  <form method="POST" id="quiz-form">
+    <input type="hidden" name="start_time" id="start-time">
+    <input type="hidden" name="end_time" id="end-time">
+    {% for q in questions %}
+    <div class="question">
+      <h3>{{ loop.index }}. {{ q.question }}</h3>
+      <div class="options">
+        {% for option in q.options %}
+        <label>
+          <input type="radio" name="{{ q.id }}" value="{{ option }}" required>
+          <span>{{ option }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit Jawaban</button>
+  </form>
+</div>
+
+<script>
+let startTime = Date.now();
+document.getElementById('start-time').value = startTime;
+
+function updateTimer() {
+    const currentTime = Date.now();
+    const elapsedTime = Math.floor((currentTime - startTime) / 1000); // dalam detik
+    
+    const minutes = Math.floor(elapsedTime / 60);
+    const seconds = elapsedTime % 60;
+    
+    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+    document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+}
+
+// Update timer setiap detik
+setInterval(updateTimer, 1000);
+
+// Saat form disubmit, catat waktu selesai
+document.getElementById('quiz-form').addEventListener('submit', function() {
+    const endTime = Date.now();
+    document.getElementById('end-time').value = endTime;
+});
+</script>
+{% endblock %}
