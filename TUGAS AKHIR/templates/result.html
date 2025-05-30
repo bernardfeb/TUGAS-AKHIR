@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2>Hasil Quiz {{ subject }}</h2>
+  
+  <div class="score-display">
+    <p>Skor Anda:</p>
+    <div class="score-value">{{ score }}/{{ total }}</div>
+    <p class="time-taken">Waktu pengerjaan: 
+      {% if time_taken >= 60 %}
+        {{ (time_taken // 60)|int }} menit {{ time_taken % 60 }} detik
+      {% else %}
+        {{ time_taken }} detik
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="results-container">
+    {% for result in results %}
+    <div class="result-item {% if result.is_correct %}correct{% else %}incorrect{% endif %}">
+      <h3>{{ loop.index }}. {{ result.question }}</h3>
+      <p class="user-answer">
+        Jawaban Anda: 
+        <span class="{% if result.is_correct %}correct-answer{% else %}wrong-answer{% endif %}">
+          {{ result.user_answer or 'Tidak dijawab' }}
+        </span>
+      </p>
+      {% if not result.is_correct %}
+      <p class="correct-answer">
+        Jawaban yang benar: {{ result.correct_answer }}
+      </p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  
+  <div class="back-to-menu" style="margin-top: 30px;">
+    <a href="{{ url_for('home') }}" class="btn btn-primary">Kembali ke Menu Awal</a>
+  </div>
+</div>
+{% endblock %}

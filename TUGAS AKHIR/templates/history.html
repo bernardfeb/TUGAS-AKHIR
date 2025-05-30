@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="header-actions">
+        <h2>Riwayat Quiz</h2>
+        <div class="action-buttons">
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+            {% if history %}
+            <a href="{{ url_for('clear_history') }}" class="btn btn-danger" 
+               onclick="return confirm('Apakah Anda yakin ingin menghapus semua riwayat quiz?')">
+                <i class="fas fa-trash"></i> Hapus Riwayat
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if history %}
+        <div class="history-list">
+            {% for quiz in history %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h3>{{ quiz.subject }}</h3>
+                        <p class="text-muted">{{ quiz.date }}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="score-info">
+                            <h4>Skor: {{ quiz.score }}/{{ quiz.total_questions }}</h4>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ quiz.percentage }}%"
+                                     aria-valuenow="{{ quiz.percentage }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ "%.1f"|format(quiz.percentage) }}%
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="answers mt-3">
+                            <h5>Detail Jawaban:</h5>
+                            {% for answer in quiz.answers %}
+                                <div class="answer-item {% if answer.is_correct %}correct{% else %}incorrect{% endif %}">
+                                    <p class="question">{{ loop.index }}. {{ answer.question }}</p>
+                                    <p class="user-answer">
+                                        Jawaban Anda: 
+                                        <span class="{% if answer.is_correct %}text-success{% else %}text-danger{% endif %}">
+                                            {{ answer.user_answer or 'Tidak dijawab' }}
+                                        </span>
+                                    </p>
+                                    {% if not answer.is_correct %}
+                                        <p class="correct-answer text-success">
+                                            Jawaban Benar: {{ answer.correct_answer }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Anda belum mengambil quiz apapun. 
+            <a href="{{ url_for('home') }}" class="alert-link">Mulai quiz sekarang!</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 
